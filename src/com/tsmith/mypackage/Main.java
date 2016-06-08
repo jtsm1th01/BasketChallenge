@@ -1,7 +1,5 @@
 package com.tsmith.mypackage;
 
-import java.util.Map;
-
 public class Main {
     private static StockList stockList = new StockList();
 
@@ -41,14 +39,28 @@ public class Main {
         Basket myBasket = new Basket("myBasket");
         Basket yourBasket = new Basket("yourBasket");
 
+        System.out.println("sellItem() bread 50 called...");
         sellItem(myBasket, "bread", 50);
         System.out.println(myBasket);
         System.out.println(stockList);
-        removeItem(myBasket, "bread", 10);
-        System.out.println(myBasket);
-        System.out.println(stockList);
-        checkOut(myBasket);
+        System.out.println("basket.removeItem() bread 10 called...");
+        myBasket.removeItem("bread", 10);
+        System.out.println("sellItem() bread 20 called...");
+        sellItem(yourBasket,"bread",20);
 
+        System.out.println(myBasket);
+        System.out.println(yourBasket);
+        System.out.println(stockList);
+        System.out.println("myBasket checkout called...");
+        myBasket.checkOut();
+
+        System.out.println(stockList);
+        System.out.println("yourBasket removeItem() bread 50 called...");
+        yourBasket.removeItem("bread", 50);
+        System.out.println("yourBasket removeItem() car 1 called...");
+        yourBasket.removeItem("car", 1);
+        System.out.println("yourBasket checkout() called...");
+        yourBasket.checkOut();
         System.out.println(stockList);
 
     }
@@ -60,33 +72,11 @@ public class Main {
             return 0;
         }
         if(stockList.reserveStock(stockItem, quantity) != 0) {
-            basket.addToBasket(stockItem, quantity);
+            basket.addItem(stockItem, quantity);
             stockItem.adjustReserved(quantity);
             return quantity;
         }
         return 0;
     }
 
-    public static int removeItem(Basket basket, String item, int quantity) {
-        StockItem itemToRemove = stockList.get(item);
-        if(basket.getBasketItems().containsKey(itemToRemove)==false) {
-            System.out.println("Item not in basket.");
-            return 0;
-        }
-        int currentReserved = basket.getBasketItems().get(itemToRemove);
-        if(currentReserved < quantity) {
-            System.out.println("There aren't that many " + item + " in the basket.");
-            return 0;
-        }
-        itemToRemove.adjustReserved(-quantity);
-        return basket.getBasketItems().put(itemToRemove, (currentReserved - quantity));
-    }
-
-    public static void checkOut(Basket basket) {
-        for(Map.Entry<StockItem, Integer> item: basket.getBasketItems().entrySet()) {
-            item.getKey().adjustStock(-item.getValue());
-        }
-        basket.getBasketItems().clear();
-        System.out.println("Thank you for shopping with us. Please come again.");
-    }
 }
